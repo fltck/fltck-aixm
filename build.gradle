@@ -1,0 +1,97 @@
+configurations {
+    jaxb
+}
+
+apply plugin: 'java'
+apply plugin: 'eclipse'
+
+repositories {
+   flatDir {
+       dirs 'lib'
+   }
+}
+
+// tag::wsdl[]
+task genJaxb {
+    ext.sourcesDir = "${projectDir}/generated-sources/jaxb"
+    ext.classesDir = "${projectDir}/classes/jaxb"
+    ext.schemaDir = "${projectDir}/src/main/resources/schema"
+    ext.bindingDir = "${projectDir}/src/main/resources/binding"
+
+    outputs.dir classesDir
+
+    doLast() {
+        project.ant {
+            taskdef name: "xjc", classname: "com.sun.tools.xjc.XJC2Task",
+                    classpath: configurations.jaxb.asPath
+            mkdir(dir: sourcesDir)
+            mkdir(dir: classesDir)
+
+            xjc(destdir: sourcesDir) {
+                schema(dir: schemaDir) {
+                    include(name:'AIXM_Features.xsd')
+                    include(name:'message/AIXM_BasicMessage.xsd')
+                    include(name:'event/Event_Features.xsd')
+                    include(name:'extensions/FAA/FNS_Features.xsd')
+                    include(name:'extensions/FAA/FNSE/FNSE_Features.xsd')
+                }
+                binding(dir: bindingDir) {
+                    include(name:'aixm.xjb')
+                    include(name:'fns.xjb')
+                    include(name:'fnse.xjb')
+                    include(name:'gml.xjb')
+                    include(name:'iso.xjb')
+                    include(name:'xlink.xjb')
+                }
+                arg(value: "-extension")
+                arg(value: "-Xnamespace-prefix")
+                arg(value: "-Xannotate")
+                produces(dir: sourcesDir, includes: "**/*.java")
+            }
+
+            javac(destdir: classesDir, source: 1.8, target: 1.8, debug: true,
+                    debugLevel: "lines,vars,source",
+                    classpath: configurations.jaxb.asPath) {
+                src(path: sourcesDir)
+                include(name: "**/*.java")
+                include(name: "*.java")
+            }
+
+            copy(todir: classesDir) {
+                fileset(dir: sourcesDir, erroronmissingdir: false) {
+                    exclude(name: "**/*.java")
+                }
+            }
+        }
+    }
+}
+// end::wsdl[]
+
+jar {
+    from genJaxb.classesDir
+    baseName = 'fltck-aixm'
+    version = '0.0.1-SNAPSHOT'
+}
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile(files(genJaxb.classesDir).builtBy(genJaxb))
+    jaxb 'com.sun.xml.bind:jaxb-core:2.2.11'
+    jaxb 'com.sun.xml.bind:jaxb-xjc:2.2.11'
+    jaxb 'com.sun.xml.bind:jaxb-impl:2.2.11'
+    jaxb 'javax.xml.bind:jaxb-api:2.2.12-b141001.1542'
+    jaxb 'org.jvnet.jaxb2_commons:jaxb2-basics-annotate:1.0.2'
+    jaxb 'org.jvnet.jaxb2_commons:jaxb2-namespace-prefix:1.1'
+}
