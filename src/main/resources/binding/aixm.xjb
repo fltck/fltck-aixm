@@ -47,6 +47,16 @@
 		<jaxb:bindings>
 			<namespace:prefix name="aixm"/>
 		</jaxb:bindings>
+        <jaxb:bindings node="//xs:group[@name='AirportHeliportPropertyGroup']">
+            <jaxb:bindings node=".//xs:element[@name='name']">
+                <jaxb:property name="AirportHeliportName"/>
+            </jaxb:bindings>
+        </jaxb:bindings>
+        <jaxb:bindings node="//xs:group[@name='ProcedurePropertyGroup']">
+            <jaxb:bindings node=".//xs:element[@name='name']">
+                <jaxb:property name="InstrumentProcedureName"/>
+            </jaxb:bindings>
+        </jaxb:bindings>
 	</jaxb:bindings>
 
 	<!--jaxb:bindings scd="x-schema::message" xmlns:message="http://www.aixm.aero/schema/5.1/message"-->
@@ -60,22 +70,22 @@
 		</jaxb:bindings>
 	</jaxb:bindings>
 	
-	<!--jaxb:bindings scd="x-schema::event" xmlns:event="http://www.aixm.aero/schema/5.1/event"-->
-	<!-- NOTE: namespace-prefix plugin (xjc dependency) does not work properly with scd attribute -->
-	<jaxb:bindings schemaLocation="../schema/event/Event_Features.xsd">
-		<jaxb:schemaBindings>
-			<jaxb:package name="aero.aixm.event"/>
-		</jaxb:schemaBindings>
-		<jaxb:bindings>
-			<namespace:prefix name="event"/>
-		</jaxb:bindings>
+    <!--jaxb:bindings scd="x-schema::event" xmlns:event="http://www.aixm.aero/schema/5.1/event"-->
+    <!-- NOTE: namespace-prefix plugin (xjc dependency) does not work properly with scd attribute -->
+    <jaxb:bindings schemaLocation="../schema/event/Event_Features.xsd">
+        <jaxb:schemaBindings>
+            <jaxb:package name="aero.aixm.event"/>
+        </jaxb:schemaBindings>
+        <jaxb:bindings>
+            <namespace:prefix name="event"/>
+        </jaxb:bindings>
         <jaxb:bindings node="//xs:group[@name='EventPropertyGroup']">
             <jaxb:bindings node=".//xs:element[@name='name']">
                 <jaxb:property name="EventName"/>
             </jaxb:bindings>
         </jaxb:bindings>
 
-	</jaxb:bindings>
+    </jaxb:bindings>
 
 </jaxb:bindings>
 

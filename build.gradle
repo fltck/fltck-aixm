@@ -32,6 +32,7 @@ task genJaxb {
                     include(name:'AIXM_Features.xsd')
                     include(name:'message/AIXM_BasicMessage.xsd')
                     include(name:'event/Event_Features.xsd')
+                    include(name:'extensions/FAA/SubscriberFile-AIXM.xsd')
                     include(name:'extensions/FAA/FNS_Features.xsd')
                     include(name:'extensions/FAA/FNSE/FNSE_Features.xsd')
                 }
